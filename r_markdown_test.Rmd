@@ -1,0 +1,22 @@
+
+title: "Mi primera prueba con Rmarkdown"
+output: html_document
+---
+
+data(cars)
+cars
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#hola
+*hola a todos*
+
+
+```{r}
+plot(cars)
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
