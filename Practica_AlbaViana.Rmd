@@ -1,0 +1,92 @@
+---
+title: "Practica General - Alba Viana Soto"
+output: html_document
+---
+
+#### Curso Manejo de datos con R - UAH
+#### Alba Viana Soto
+#### 18/01/2022
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(palmerpenguins)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+data(penguins, package = 'palmerpenguins')
+
+```
+## Exercise 1
+### Number of individuals:
+
+### Individuals per species
+
+```{r spec_counts, warn=FALSE}
+penguins |>
+  group_by(species) |>
+  summarize(count=n())
+```
+
+### Individuals per species and sex
+
+```{r spec_sex, warn=FALSE}
+penguins %>%
+  filter(!is.na(sex)) %>%
+  group_by(species, sex) %>%
+  summarize(count=n())
+```
+
+### Statistics from bill, flipper and body
+
+```{r stats_penguins, warn=FALSE}
+col_vector <- c("bill_length_mm", "bill_depth_mm",
+                "flipper_length_mm", "body_mass_g")
+sep <- "@"
+naming <- paste("{.col}", "{.fn}", sep = sep)
+stats_list <- list(min=min, mean=mean, sd=sd, max=max)
+penguins |>
+  summarise(across(col_vector, stats_list, na.rm=TRUE, .names = naming)) |>
+  pivot_longer(everything(), names_to = c("var", ".value"), names_sep = sep)
+```
+
+
+## Exercise 2
+
+### Number of individuals per species sampled from each island:
+
+```{r bar_plot}
+colors_species <- list(Chinstrap="purple", Gentoo="blue", Adelie="darkorange")
+ggplot(data = penguins) +
+  geom_bar(aes(x=island, fill=species)) +
+  scale_fill_manual(values = colors_species)
+```
+
+#### Result: Adelaide was sampled in three islands
+
+### Count individuals from Dream Island:
+
+```{r count_dreams}
+penguins |>
+  group_by(island) |>
+  count() |>
+  filter(island == "Dream") |>
+  select(n)
+```
+#### Result: 124 inviduals have been sampled in the Dream island
+
+## Exercise 3
+
+```{r boxplot_penguins}
+penguins |>
+  filter(!is.na(sex)) |>
+  ggplot() +
+  geom_boxplot(aes(x=sex, y=body_mass_g)) +
+  facet_grid(cols = vars(species)) +
+  labs(x = "Sex", y = "Body mass (g)")
+```
+
+#### Result: Gentoo has the largest body weight
+#### Result: Chinstrap display lower difference in body weight among sex
